@@ -1,0 +1,23 @@
+{% extends '../base.html' %}
+{% block head %}
+{% endblock %}
+{% block title %}Sport - login{% endblock %}
+{% block content %}
+    <br>
+    <br>
+    <div class="jumbotron py-5 mx-auto" id="login-form">
+        <h3 class="text-center">Connexion</h3>
+        <form method="post" role="form" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username" class="text-center">Login</label>
+                <input type="text" name="username" class="form-control" placeholder="Login" required>
+            </div>
+            <div class="form-group">
+                <label for="username" class="text-center">Mot de passe</label>
+                <input type="password" name="password" class="form-control" placeholder="mot de passe" required>
+            </div>
+            <input type="submit" value="Se connecter" class="btn btn-primary">
+        </form>
+    </div>
+{% endblock %}
