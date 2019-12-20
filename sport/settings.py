@@ -27,8 +27,7 @@ SECRET_KEY = 'et=$ghqsy+103nzkbu$&19k5ph1v!rar!4=tmosz@ie0o1lhjj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -41,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap',
     'sport.apps.core',
+    'sport.apps.stats',
 ]
 
 MIDDLEWARE = [

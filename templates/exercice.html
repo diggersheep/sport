@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="jumbotron w-100 py-5 mx-auto mt-2">
+        <h3>{{ exercice.description }}</h3>
+        <br>
+        <p>Configuration : <span class="badge badge-primary">{{ exercice.setting }}</span></p>
+    </div>
+
+    <div class="card bg-primary text-white h-100">
+        <form action="" method="post">
+            <div class="card-body align-items-start row">
+                {% csrf_token %}
+                <div class="form-group p-4 col-sm-12 col-md-6">
+                    <label for="weight">Poids</label>
+                    <input name="weight" type="number" class="form-control" value="0" min="0" step="0.5">
+                </div>
+                <div class="form-group p-4 col-sm-12 col-md-6 ">
+                    <label for="reps">Répétitions</label>
+                    <input type="number" name="reps" class="form-control" value="0" min="0" step="1">
+                </div>
+                <div class="col-12 text-center">
+                    <button class="btn btn-outline-light" id="add_content" data-target="#exampleModal">Ajouter une série</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <h2>Liste des Séries</h2>
+
+    <h3>5 Dernières séries</h3>
+    {% for serie in series %}
+        <div class="card border-primary h-100 p-3 mb-1">
+            <div class="row">
+                {% now "Ymd" as today %}
+                {% if serie.date|date:"Ymd" == today %}
+                    <div class="col-4">
+                        <div class=" badge badge-primary">Aujourd'hui</div>
+                    </div>
+                {% else %}
+                    <div class="col-4">{{ serie.date|date:"d M Y" }}</div>
+                {% endif %}
+                <div class="col-4">Poids: {{ serie.weight }} kg</div>
+                <div class="col-3">Répétitions: {{ serie.reps }}</div>
+                <div class="col-1">
+                    <form action="{% url "del_serie" %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="exo_id" value="{{ exercice.id }}"/>
+                        <input type="hidden" name="serie_id" value="{{ serie.id }}"/>
+                        <button class="btn btn-outline-primary del_serie" id="{{ serie.id }}">❌</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    
+
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+        $(".del_serie").each(function(i, e){
+            console.log(e);
+            $(e).on('click',
+                function(elem)
+                {
+                    if (confirm('Voulez-vous supprimer cette série ?')) {
+                        $(elem).submit()
+                    }
+                }
+            )
+        });
+
+        $('#add_content').on('click', function(elem){
+            elem.preventDefault();
+            // data-toggle="modal"
+        });
+    </script>
+
+{% endblock %}
