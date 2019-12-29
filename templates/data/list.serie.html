@@ -1,0 +1,35 @@
+{% if series|length == 0 %}
+    <div class="jumbotron text-justify">
+        Pas de série pour cette exercice.
+        <span class="text-primary">Quand est-ce qu'on commence ?</span>
+    </div>
+{% else %}
+    <div class="row container">
+    {% for serie in series %}
+        <div class="modal-dialog
+             col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3"
+             role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {% now "Ymd" as today %}
+                    {% if serie.date|date:"Ymd" == today %}
+                        <h5 class="modal-title text-primary">Aujourd'hui</h5>
+                    {% else %}
+                        <h5 class="modal-title">{{ serie.date|date:"d M Y" }}</h5>
+                    {% endif %}
+
+                    <button type="button" class="close del-serie" data-dismiss="modal" aria-label="Close" id="{{ serie.id }}">
+                        <span aria-hidden="true" id="{{ serie.id }}">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Poids: <span class="badge badge-primary">{{ serie.weight }} kg</span></p>
+                    <p>Répétitions: <span class="badge badge-primary">{{ serie.reps }}</span></p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+
+{% endif %}
+

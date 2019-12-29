@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'bootstrap',
     'sport.apps.core',
     'sport.apps.stats',
+    'sport.apps.core.templatetags',
 ]
 
 MIDDLEWARE = [

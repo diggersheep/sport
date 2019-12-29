@@ -13,6 +13,13 @@
 
     {% for exercice in exercices %}
         <div class="card border-primary h-100 mb-2">
+            {% if exercice.has_today_serie %}
+                <div class="pl-4 pt-1">
+                    <p class="badge badge-success">
+                        Aujourd'hui
+                    </p>
+                </div>
+            {% endif %}
             <a href="{% url 'exercice' exercice.id %}">
                 <div class="card-body d-flex flex-column align-items-start row">
                     <div class="col-sm-12 col-md-6">
@@ -20,7 +27,7 @@
                     </div>
 
                     <div class="col-sm-12 col-md-6">
-                        <p class="text-dark">Réglage: <span class="badge badge-secondary">{{ exercice.setting }}</span></p>
+                        <p class="text-primary">Réglage: <span class="badge badge-secondary">{{ exercice.setting }}</span></p>
                     </div>
                 </div>
             </a>

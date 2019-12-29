@@ -12,5 +12,9 @@ class StatsView(TemplateView):
     template_name = 'stats.html'
 
     def get(self, request, **kwargs):
-        return render(request, self.template_name)
+        series = Serie.objects.filter(user=request.user)
+        context = {
+            'total_series': len(series)
+        }
+        return render(request, self.template_name, context=context)
 

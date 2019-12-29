@@ -1,4 +1,13 @@
+{% load filters %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+
+    {% if request.get_full_path != "/" %}
+    <a
+            onClick="javascript:history.go(-1);"
+            class="nav-link p-0 text-white"
+            style="font-size: 1.6em"
+    >&#8636;</a>
+    {% endif %}
     <a class="navbar-brand" href="{% url 'home' %}">Sport</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -20,6 +29,23 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Se déconnecter</a>
                 </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="themesDd" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Themes
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="themesDd">
+                    {% with 'darkster greyson hello_kiddie lovely monotony purple signal' as t_list %}
+                        {% for t_name in t_list.split %}
+                          <a
+                                  class="dropdown-item px-2 {% if user.profile.theme == t_name %}active{% endif %}"
+                                  href="{% url 'theme' t_name %}?next={{request.path}}"
+                          >{{ t_name|title|underscore_to_space }}</a>
+                        {% endfor %}
+                    {% endwith %}
+
+                    </div>
+                  </li>
                 <li class="nav-item">
                     <a class="nav-link">{{ user.get_username }}</a>
                 </li>

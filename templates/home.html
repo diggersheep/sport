@@ -9,16 +9,25 @@
 
     <div class="row">
         {% for machine in machines %}
-            <div class="p-2 col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                <div class="card bg-primary ">
+            <div class="p-1 col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                <div class="card bg-primary">
                     <a href="{% url 'machine' machine.id %}">
                         <div class="card-body row">
-                            <div class="col-4">
-                                <img src="{% static 'img/' %}{{ machine.picture }}" alt="" height="100">
+                            <div class="col-4 ">
+                                <img src="{% static 'img/' %}{{ machine.picture }}" alt="" height="70">
                             </div>
-                            <div class="col-8 text-center">
-                                <h4 class="card-title text-white">{{ machine.name }}</h4>
-                            </div>
+                            {% if machine.has_today_serie %}
+                                <div class="col-3">
+                                    <p class="badge badge-success">Ajourd'hui</p>
+                                </div>
+                                <div class="col-5 text-center">
+                                    <h4 class="card-title text-white">{{ machine.name }}</h4>
+                                </div>
+                            {% else %}
+                                <div class="col-8 text-center">
+                                    <h4 class="card-title text-white">{{ machine.name }}</h4>
+                                </div>
+                            {% endif %}
                         </div>
                     </a>
                 </div>
