@@ -14,6 +14,9 @@ class Machine(models.Model):
     name = models.CharField(max_length=32)
     picture = models.CharField(max_length=32, null=True)
 
+    def __str__(self):
+        return str(self.name)
+
     def has_today_serie(self):
         exos = Exercice.objects.filter(
             machine=self
@@ -28,6 +31,9 @@ class Exercice(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE)
     setting = models.CharField(max_length=32, default='')
     description = models.CharField(max_length=256, default='')
+
+    def __str__(self):
+        return '{} - {}'.format(self.machine.name, self.setting)
 
     def has_today_serie(self):
         objs = Serie.objects.filter(
@@ -45,10 +51,23 @@ class Serie(models.Model):
     date = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return '[{}@{}] {} {} - w:{} - r:{}'.format(
+            self.user.username,
+            self.date,
+            self.exercice.machine.name,
+            self.exercice.setting,
+            self.weight,
+            self.reps
+        )
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     theme = models.CharField(max_length=16, default='purple')
+
+    def __str__(self):
+        return str(self.user.username)
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
