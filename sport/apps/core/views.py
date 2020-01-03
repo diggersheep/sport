@@ -1,5 +1,7 @@
 
 # Create your views here.
+from typing import List
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max
 from django.http import HttpResponseRedirect, HttpResponse
@@ -23,8 +25,15 @@ class HomeView(TemplateView):
     def home(self, request, **kwargs):
         from sport.apps.core.models import Exercice, Serie
 
+        machines = Machine.objects.all()
+        machines_today: List[int] = []
+        for machine in machines:
+            if machine.has_today_serie(request.user):
+                machines_today.append(machine.id)
+
         context = {
-            'machines': Machine.objects.all()
+            'machines': machines,
+            'machines_today': machines_today,
         }
         return render(request, self.template_name, context=context)
 
@@ -32,10 +41,18 @@ class MachineView(TemplateView):
     template_name = 'machine.html'
 
 #    @login_required
-    def get(self, request, machine_id, **kwargs):
+    def get(self, request, machine_id: int, **kwargs):
+        exos: List[Exercice] = Exercice.objects.filter(machine__id=machine_id)
+        exos_today: List[int] = []
+
+        for exo in exos:
+            if exo.has_today_serie(request.user):
+                exos_today.append(exo.id)
+
         context = {
             'machine': Machine.objects.get(id=machine_id),
-            'exercices': Exercice.objects.filter(machine__id=machine_id)
+            'exercices': exos,
+            'exos_today': exos_today,
         }
         return render(request, self.template_name, context=context)
 
@@ -50,6 +67,7 @@ class ExerciceView(TemplateView):
             'max': Serie.objects.filter(user=request.user).aggregate(weight=Max('weight'))
         }
         return render(request, self.template_name, context=context)
+
 
 @csrf_exempt
 def post_add_serie(request):
@@ -69,8 +87,6 @@ class ErrorView(TemplateView):
     def get(self, request, code, **kwargs):
         template_name = 'errors/{}.html'.format(code)
         return render(request, template_name)
-
-
 
 
 @csrf_exempt
@@ -123,7 +139,6 @@ def theme_view(request, theme_name):
     themes = [
         'darkster',
         'greyson',
-        'hello kiddie',
         'lovely',
         'monotony',
         'purple',

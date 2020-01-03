@@ -17,12 +17,12 @@ class Machine(models.Model):
     def __str__(self):
         return str(self.name)
 
-    def has_today_serie(self):
+    def has_today_serie(self, user):
         exos = Exercice.objects.filter(
             machine=self
         )
         for exo in exos:
-            if Exercice.has_today_serie(exo.id):
+            if Exercice.has_today_serie(exo.id, user=user):
                 return True
         return False
 
@@ -35,10 +35,11 @@ class Exercice(models.Model):
     def __str__(self):
         return '{} - {}'.format(self.machine.name, self.setting)
 
-    def has_today_serie(self):
+    def has_today_serie(self, user):
         objs = Serie.objects.filter(
             exercice=self,
             date__gte=datetime.now().replace(hour=0, minute=0, second=0),
+            user=user,
         )
         return len(objs) > 0
 

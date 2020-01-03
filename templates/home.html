@@ -16,7 +16,7 @@
                             <div class="col-4 ">
                                 <img src="{% static 'img/' %}{{ machine.picture }}" alt="" height="70">
                             </div>
-                            {% if machine.has_today_serie %}
+                            {% if machine.id in  machines_today %}
                                 <div class="col-3">
                                     <p class="badge badge-success">Ajourd'hui</p>
                                 </div>

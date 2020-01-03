@@ -2,3 +2,17 @@
 {
     width: 350px;
 }
+
+.no-opacity-first-serie {
+    opacity: 0;
+    transition: opacity 1s;
+}
+.fade-in-first-serie {
+    opacity: 1;
+    transition: opacity 1s;
+}
+#top-label {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .5s;
+}

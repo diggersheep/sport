@@ -6,7 +6,12 @@
 {% else %}
     <div class="row container">
     {% for serie in series %}
+        {% if forloop.first %}
+        <div class="modal-dialog no-opacity-first-serie
+        {% else %}
         <div class="modal-dialog
+        {% endif %}
+             serie-item
              col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3"
              role="document">
             <div class="modal-content">

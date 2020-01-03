@@ -57,24 +57,34 @@
       </div>
     </div>
 
+    <div id="top-label" class="w-100 fixed-top bg-success p-3 text-center text-white">
+        Série supprimée avec succès :)
+    </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script>
-        $(".del_serie").each(function(i, e){
+        var top_timeout = 0;
+        /*$(".del_serie").each(function(i, e){
             $(e).on('click',
                 function(elem)
                 {
                     if (confirm('Voulez-vous supprimer cette série ?')) {
-                        $(elem).submit()
+                        $(elem).fadeOut(200, function(){});
+                        setTimeout(function(){
+                                $(elem).submit();
+                            },
+                            200
+                        );
                     }
                 }
             )
-        });
+        });*/
 
+        // Add content
         $('#add_content').on('click', function(event){
             event.preventDefault();
             weight = $('#weight').val();
             reps = $('#reps').val();
-            {#data-toggle="modal"#}
             $.post({
                 url: '/exercice/add_serie/',
                 data: {
@@ -83,7 +93,7 @@
                     exo_id: {{ exercice.id }},
                 },
                 success: function(data){
-                    load_data(5, {{ exercice.id }});
+                    load_data(5, {{ exercice.id }}, true);
                     get_for_info(true);
                 },
                 error: function(data){
@@ -106,7 +116,6 @@
             if (success) {
                 info_url = '{% url 'info' 'add_serie_success' %}'
             }
-            console.log(info_url);
             $.get({
                 url: info_url,
                 success: function(data) {
@@ -118,28 +127,39 @@
             })
         }
 
-        function load_data(lim, id){
+        function load_data(lim, id, fade=true){
             $.get({
               url: '/series/',
               success: function(data){
-               $('#list-series').html(data);
-               $('.del-serie').each(function(i, e){
-                  $(e).on('click', function(event){
-                      if (confirm('Veux-tu vraiment supprimer cette série ?'))
-                      {
+                  $('#list-series').html(data);
+
+                  // fade in for first elem of the list
+                  if (fade) {
+                      setTimeout(function(){
+                          $('.no-opacity-first-serie:first').css('opacity', '1');},
+                          10
+                      );
+                  } else {
+                      $('.no-opacity-first-serie:first').css('opacity', '1');
+                  }
+
+                  $('.del-serie').each(function(i, e){
+                    $(e).on('click', function(event){
+                      if (confirm('Veux-tu vraiment supprimer cette série ?')) {
                         serie_id = event.target.getAttribute('id');
                         $.post({
-                            url: '{% url 'del_serie' %}',
-                            data: {
-                                serie_id: serie_id,
-                                exo_id: {{ exercice.id }},
-                                success: function(data){load_data(5, {{ exercice.id }})}
-                            }
-
+                          url: '{% url 'del_serie' %}',
+                          data: {
+                            serie_id: serie_id,
+                            exo_id: {{ exercice.id }},
+                            success: del_success_callback
+                          }
                         });
                       }
+                    });
                   });
-               });
+
+
              },
               data: {
                 exo_id: id,
@@ -148,10 +168,25 @@
             });
         }
 
-        window.addEventListener('load', function(){
-            load_data(5, {{ exercice.id }});
-        })
+        function del_success_callback (data) {
+            load_data(5, {{ exercice.id }}, false);
+            $('#top-label').css('visibility', 'visible');
+            $('#top-label').css('opacity', '0.9');
+            setTimeout(function(){
+                    $('#top-label').css('opacity', '0');
+                    setTimeout(function(){
+                           $('#top-label').css('visibility', 'hidden');
+                        },
+                        500
+                    );
+                },
+                3000);
+            console.log('hello');
+        }
 
+        window.addEventListener('load', function(){
+            load_data(5, {{ exercice.id }}, false);
+        })
 
     </script>
 
