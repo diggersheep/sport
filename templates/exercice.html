@@ -119,7 +119,7 @@
             $.get({
                 url: info_url,
                 success: function(data) {
-                    $('#form-info').html(data)
+                    $('#form-info').html(data).fadeOut(5000, function() { $('#form-info').remove(); })
                 },
                 error: function(data) {
                     $('#form-info').html('fail')
