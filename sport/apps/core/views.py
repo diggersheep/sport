@@ -116,7 +116,7 @@ class SeriesView(TemplateView):
 
         context = {
             'series': Serie.objects.filter(
-                user_id=1
+                user_id=request.user
             ).order_by('-date')[:limit],
         }
 
