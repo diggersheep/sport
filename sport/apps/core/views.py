@@ -97,7 +97,11 @@ def post_serie_delete(request):
     print(exo_id)
     print(serie_id)
 
-    Serie.objects.get(id=serie_id).delete()
+
+    s= Serie.objects.get(id=serie_id)
+    if s.user == request.user:
+        s.delete()
+        return HttpResponse('ko')
     return HttpResponse('ok')
 
 class SeriesView(TemplateView):
