@@ -62,6 +62,10 @@ class Serie(models.Model):
             self.reps
         )
 
+    def get_date(self):
+        return self.date.strftime('%Y-%m-%d')
+
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

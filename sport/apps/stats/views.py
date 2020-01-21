@@ -6,15 +6,17 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 
 from sport.apps.core.models import Machine, Exercice, Serie
+from sport.apps.stats.utils import Stats
 
 
 class StatsView(TemplateView):
     template_name = 'stats.html'
 
     def get(self, request, **kwargs):
-        series = Serie.objects.filter(user=request.user)
+        stats = Stats(user=request.user)
+        stats.all()
         context = {
-            'total_series': len(series)
+            'stats': stats
         }
         return render(request, self.template_name, context=context)
 

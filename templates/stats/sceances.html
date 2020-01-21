@@ -2,7 +2,10 @@
     <h2>Scéances</h2>
     <div class="row">
         <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
-            Nombre total de séries: <span class="badge badge-primary">{{ total_series }}</span>
+            Nombre de scéances: <span class="badge badge-primary">{{ stats.stats.n_sceances }}</span>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+            Nombre moyen d'exercice par scéances: <span class="badge badge-primary">{{ stats.stats.mean_exercice_per_sceance }}</span>
         </div>
     </div>
 </div>
