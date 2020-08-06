@@ -139,3 +139,4 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.normpath(os.path.join(DJANGO_ROOT, 'static')),
 ]
+
