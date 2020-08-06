@@ -12,6 +12,23 @@ from django.views.generic import TemplateView
 from sport.apps.core.models import Machine, Exercice, Serie
 
 
+def home(request):
+    if request.user and request.user.is_authenticated:
+        machines = Machine.objects.all()
+        machines_today: List[int] = []
+        for machine in machines:
+            if machine.has_today_serie(request.user):
+                machines_today.append(machine.id)
+
+        context = {
+            'machines': machines,
+            'machines_today': machines_today,
+        }
+        return render(request, 'home.html', context=context)
+    else:
+        return redirect('login')
+
+
 class HomeView(TemplateView):
     template_name = 'home.html'
     redirect = '/login'
@@ -23,8 +40,6 @@ class HomeView(TemplateView):
             return redirect('login')
 
     def home(self, request, **kwargs):
-        from sport.apps.core.models import Exercice, Serie
-
         machines = Machine.objects.all()
         machines_today: List[int] = []
         for machine in machines:

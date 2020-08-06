@@ -2,13 +2,14 @@ from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.urls import path
 
+from sport.apps.core import views
 from sport.apps.core.views import HomeView, MachineView, ExerciceView, ErrorView, SeriesView, \
     post_serie_delete, post_add_serie, get_additionnal_info, theme_view
 from sport.apps.login.views import LoginView, LogoutView
 from sport.apps.stats.views import StatsView
 
 urlpatterns = [
-    path('', HomeView.as_view(), name="home"),
+    path('', views.home, name="home"),
     path('error/<int:code>', ErrorView.as_view(), name="error"),
     path('login/', LoginView.as_view(), name="login"),
     path('logout/', LogoutView.as_view(), name="logout"),
