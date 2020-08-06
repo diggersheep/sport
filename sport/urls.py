@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import path
 
 from sport.apps.core import views
-from sport.apps.core.views import ExerciceView, ErrorView, SeriesView, \
+from sport.apps.core.views import ErrorView, SeriesView, \
     post_serie_delete, post_add_serie, get_additionnal_info, theme_view
 from sport.apps.login.views import LoginView, LogoutView
 from sport.apps.stats.views import StatsView
@@ -16,9 +16,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('machine/<int:machine_id>', views.machine, name='machine'),
-    path('exercice', post_serie_delete, name='del_serie'),
-    path('exercice/<int:exo_id>', ExerciceView.as_view(), name='exercice'),
-    path('exercice/add_serie/', post_add_serie, name='add_serie'),
+    path('exercise', post_serie_delete, name='del_serie'),
+    path('exercise/<int:exo_id>', views.exercise, name='exercise'),
+    path('exercise/add_serie/', post_add_serie, name='add_serie'),
 
     path('stats/', StatsView.as_view(), name='stats'),
     path('series/', SeriesView.as_view(), name='series'),

@@ -31,31 +31,28 @@ def home(request):
 
 @login_required
 def machine(request, machine_id: int, **kwargs):
-    exercices: List[Exercice] = Exercice.objects.filter(machine__id=machine_id)
-    exercices_today: List[int] = []
+    exercises: List[Exercice] = Exercice.objects.filter(machine__id=machine_id)
+    exercises_today: List[int] = []
 
-    for exo in exercices:
+    for exo in exercises:
         if exo.has_today_serie(request.user):
-            exercices_today.append(exo.id)
+            exercises_today.append(exo.id)
 
     context = {
         'machine': Machine.objects.get(id=machine_id),
-        'exercices': exercices,
-        'exos_today': exercices_today,
+        'exercises': exercises,
+        'exercises_today': exercises_today,
     }
     return render(request, 'machine.html', context=context)
 
 
-class ExerciceView(TemplateView):
-    template_name = 'exercice.html'
-
-#    @login_required
-    def get(self, request, exo_id, **kwargs):
-        context = {
-            'exercice': Exercice.objects.get(id=exo_id),
-            'max': Serie.objects.filter(user=request.user).aggregate(weight=Max('weight'))
-        }
-        return render(request, self.template_name, context=context)
+@login_required
+def exercise(request, exo_id, **kwargs):
+    context = {
+        'exercise': Exercice.objects.get(id=exo_id),
+        'max': Serie.objects.filter(user=request.user).aggregate(weight=Max('weight'))
+    }
+    return render(request, 'exercice.html', context=context)
 
 
 @csrf_exempt
