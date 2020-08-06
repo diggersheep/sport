@@ -29,47 +29,21 @@ def home(request):
         return redirect('login')
 
 
-class HomeView(TemplateView):
-    template_name = 'home.html'
-    redirect = '/login'
+@login_required
+def machine(request, machine_id: int, **kwargs):
+    exercices: List[Exercice] = Exercice.objects.filter(machine__id=machine_id)
+    exercices_today: List[int] = []
 
-    def get(self, request, **kwargs):
-        if request.user and request.user.is_authenticated:
-            return self.home(request, **kwargs)
-        else:
-            return redirect('login')
+    for exo in exercices:
+        if exo.has_today_serie(request.user):
+            exercices_today.append(exo.id)
 
-    def home(self, request, **kwargs):
-        machines = Machine.objects.all()
-        machines_today: List[int] = []
-        for machine in machines:
-            if machine.has_today_serie(request.user):
-                machines_today.append(machine.id)
-
-        context = {
-            'machines': machines,
-            'machines_today': machines_today,
-        }
-        return render(request, self.template_name, context=context)
-
-class MachineView(TemplateView):
-    template_name = 'machine.html'
-
-#    @login_required
-    def get(self, request, machine_id: int, **kwargs):
-        exos: List[Exercice] = Exercice.objects.filter(machine__id=machine_id)
-        exos_today: List[int] = []
-
-        for exo in exos:
-            if exo.has_today_serie(request.user):
-                exos_today.append(exo.id)
-
-        context = {
-            'machine': Machine.objects.get(id=machine_id),
-            'exercices': exos,
-            'exos_today': exos_today,
-        }
-        return render(request, self.template_name, context=context)
+    context = {
+        'machine': Machine.objects.get(id=machine_id),
+        'exercices': exercices,
+        'exos_today': exercices_today,
+    }
+    return render(request, 'machine.html', context=context)
 
 
 class ExerciceView(TemplateView):
