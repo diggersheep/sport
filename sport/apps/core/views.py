@@ -7,7 +7,8 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
-from sport.apps.core.models import Machine, Exercice, Serie
+from sport.apps.core.forms import MachineForm
+from sport.apps.core.models import Machine, Exercise, Serie
 
 
 def home(request):
@@ -29,7 +30,7 @@ def home(request):
 
 @login_required
 def machine(request, machine_id: int, **kwargs):
-    exercises: List[Exercice] = Exercice.objects.filter(machine__id=machine_id)
+    exercises: List[Exercise] = Exercise.objects.filter(machine__id=machine_id)
     exercises_today: List[int] = []
 
     for exo in exercises:
@@ -47,7 +48,7 @@ def machine(request, machine_id: int, **kwargs):
 @login_required
 def exercise(request, exo_id, **kwargs):
     context = {
-        'exercise': Exercice.objects.get(id=exo_id),
+        'exercise': Exercise.objects.get(id=exo_id),
         'max': Serie.objects.filter(user=request.user).aggregate(weight=Max('weight'))
     }
     return render(request, 'exercise.html', context=context)
@@ -61,9 +62,9 @@ def post_add_serie(request):
     exo_id = request.POST.get('exo_id', '0')
 
     if reps == '0' or (reps == '0' and weight == '0'):
-        return redirect('exercice', exo_id)
+        return redirect('exercise', exo_id)
 
-    Serie(weight=weight, reps=reps, user=request.user, exercice_id=exo_id).save()
+    Serie(weight=weight, reps=reps, user=request.user, exercise_id=exo_id).save()
     return HttpResponse('ok')
 
 
@@ -98,7 +99,7 @@ def get_series(request, **kwargs):
 
     series: Iterable[Serie] = Serie.objects.filter(
         user_id=request.user,
-        exercice_id=exo_id
+        exercise_id=exo_id
     ).order_by('-date')[:limit]
 
     context: Dict[str, Iterable[Serie]] = {'series': series}
@@ -136,3 +137,25 @@ def theme_view(request, theme_name):
         return redirect(next)
     else:
         return redirect('home')
+
+
+@login_required
+def add_new_machine(request):
+    if not request.user.is_superuser:
+        return redirect('error', 403)
+
+    form: MachineForm = MachineForm()
+    if request.method == 'POST':
+        form = MachineForm(request.POST, request.FILES)
+        print(request.POST)
+        print(request.FILES)
+        if form.is_valid():
+            print('valid')
+            form.save()
+        else:
+            print('not valid')
+        ctx: Dict[str, MachineForm] = {'machine_form': form}
+        return render(request, 'core/add_machine.html', context=ctx)
+    else:
+        ctx: Dict[str, MachineForm] = {'machine_form': form}
+        return render(request, 'core/add_machine.html', context=ctx)

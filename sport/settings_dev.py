@@ -135,8 +135,11 @@ SITE_ROOT = os.path.dirname(DJANGO_ROOT)
 SITE_NAME = os.path.basename(DJANGO_ROOT)
 
 STATIC_URL = '/static/'
-
 STATICFILES_DIRS = [
     os.path.normpath(os.path.join(DJANGO_ROOT, 'static')),
 ]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.normpath(os.path.join(DJANGO_ROOT, 'media'))
+print(STATICFILES_DIRS)
+print(MEDIA_ROOT)

@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.urls import path
@@ -13,6 +15,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name="logout"),
     path('admin/', admin.site.urls),
 
+    path('machine/new/', views.add_new_machine, name='new_machine'),
     path('machine/<int:machine_id>', views.machine, name='machine'),
     path('exercise', views.post_serie_delete, name='del_serie'),
     path('exercise/<int:exo_id>', views.exercise, name='exercise'),
@@ -23,4 +26,4 @@ urlpatterns = [
 
     path('info/<str:page>', views.get_additional_info, name='info'),
     path('theme/<str:theme_name>', views.theme_view, name='theme'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

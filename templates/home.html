@@ -14,7 +14,7 @@
                     <a href="{% url 'machine' machine.id %}">
                         <div class="card-body row">
                             <div class="col-4 ">
-                                <img src="{% static 'img/' %}{{ machine.picture }}" alt="" height="70">
+                                <img src="{{ machine.picture.url }}" alt="" height="70">
                             </div>
                             {% if machine.id in  machines_today %}
                                 <div class="col-3">
