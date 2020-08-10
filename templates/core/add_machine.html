@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <br>
+  <h2 class="text-primary">Ajout d'une machine</h2>
+  <br>
+
+  <div>
+    <div id="qr_reader" width="250px" class="mb-2"></div>
+
+    <form method="POST">
+      {% csrf_token %}
+      {{ machine_form.id }}
+
+      <div class="form-group row">
+        <label for="name" class="col-3">Nom</label>
+        <div class="col-6">
+          {{ machine_form.name }}
+        </div>
+        {% if machine_form.name.errors %}
+          <div class="col-3 alert alert-danger">
+            {{  machine_form.name.errors }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="form-group row">
+        <label for="code" class="col-3">QR code</label>
+        <div class="col-6">
+          <input id="reader_result" type="text"
+              name="code" class="form-control"
+              value="{{ machine_form.code.value|safe|default:'' }}" readonly required
+              placeholder="Pas de code"
+          >
+        </div>
+        {% if machine_form.code.errors %}
+          <div class="col-3 alert alert-danger">
+            {{  machine_form.code.errors }}
+          </div>
+        {% endif %}
+      </div>
+
+
+      <div class="form-group row">
+        <label for="picture" class="col-3">Photo</label>
+        <div class="col-6">
+          {{ machine_form.picture }}
+        </div>
+        {% if machine_form.picture.errors %}
+          <div class="col-3 alert alert-danger">
+            {{  machine_form.picture.errors }}
+          </div>
+        {% endif %}
+      </div>
+
+      <input type="submit" value="Ajouter" class="btn btn-primary">
+    </form>
+  </div>
+
+{% endblock %}
+
+{% block foot-javascript %}
+<script src="{% static 'js/qrcode.min.js' %}"></script>
+<script>
+function success (message) {
+    $('#reader_result').val(message);
+    console.log(message);
+}
+
+
+$(document).ready(function() {
+  let qr_reader = new Html5QrcodeScanner(
+      "qr_reader",
+      {
+          fps: 10,
+          qrbox: 250,
+      }
+  );
+  qr_reader.render(success);
+});
+</script>
+{% endblock %}

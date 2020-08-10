@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 
-from sport.apps.core.models import Machine, Exercice, Serie
+from sport.apps.core.models import Machine, Exercise, Serie
 
 
 class StatsView(TemplateView):

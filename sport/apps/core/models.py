@@ -12,22 +12,24 @@ from django.utils.datetime_safe import datetime
 
 class Machine(models.Model):
     name = models.CharField(max_length=32)
+    # picture = models.ImageField(upload_to='machines')
     picture = models.CharField(max_length=32, null=True)
+    code = models.CharField(max_length=32, null=True, blank=True)
 
     def __str__(self):
         return str(self.name)
 
     def has_today_serie(self, user):
-        exos = Exercice.objects.filter(
+        exercises = Exercise.objects.filter(
             machine=self
         )
-        for exo in exos:
-            if Exercice.has_today_serie(exo.id, user=user):
+        for exo in exercises:
+            if Exercise.has_today_serie(exo.id, user=user):
                 return True
         return False
 
 
-class Exercice(models.Model):
+class Exercise(models.Model):
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE)
     setting = models.CharField(max_length=32, default='')
     description = models.CharField(max_length=256, default='')
@@ -37,7 +39,7 @@ class Exercice(models.Model):
 
     def has_today_serie(self, user):
         objs = Serie.objects.filter(
-            exercice=self,
+            exercise=self,
             date__gte=datetime.now().replace(hour=0, minute=0, second=0),
             user=user,
         )
@@ -45,8 +47,8 @@ class Exercice(models.Model):
 
 
 class Serie(models.Model):
-    """Exervice class"""
-    exercice = models.ForeignKey(Exercice, on_delete=models.CASCADE)
+    """Exercise class"""
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     weight = models.FloatField(default=0.0)
     reps = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now=True)
@@ -56,8 +58,8 @@ class Serie(models.Model):
         return '[{}@{}] {} {} - w:{} - r:{}'.format(
             self.user.username,
             self.date,
-            self.exercice.machine.name,
-            self.exercice.setting,
+            self.exercise.machine.name,
+            self.exercise.setting,
             self.weight,
             self.reps
         )
