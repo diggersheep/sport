@@ -9,7 +9,7 @@
   <div>
     <div id="qr_reader" width="250px" class="mb-2"></div>
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       {{ machine_form.id }}
 

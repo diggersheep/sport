@@ -27,9 +27,8 @@ class MachineForm(forms.ModelForm):
             raise forms.ValidationError({'code': 'Pas de code ou code non valide'})
 
         # todo: picture validation
-        print(f'CODE {code}')
         return cleaned_data
 
     class Meta:
         model = Machine
-        fields = ('name', 'code', 'picture')
+        fields = ('id', 'name', 'code', 'picture')

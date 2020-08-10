@@ -1,6 +1,11 @@
-from typing import List
+import os
+import uuid
+from typing import List, Tuple
 
+import PIL
+from PIL import Image
 from django import template
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Q, Max, Count
@@ -11,10 +16,12 @@ from django.utils.datetime_safe import datetime
 
 
 class Machine(models.Model):
+    THUMB_WIDTH = 300
+
     name = models.CharField(max_length=32)
-    # picture = models.ImageField(upload_to='machines')
-    picture = models.CharField(max_length=32, null=True)
     code = models.CharField(max_length=32, null=True, blank=True)
+    # picture = models.CharField(max_length=32, null=True)
+    picture = models.ImageField(upload_to='machines', null=True)
 
     def __str__(self):
         return str(self.name)
@@ -27,6 +34,30 @@ class Machine(models.Model):
             if Exercise.has_today_serie(exo.id, user=user):
                 return True
         return False
+
+    def save(self, *args, **kwargs):
+        extension: str = os.path.splitext(self.picture.name)[1]
+        new_name: str = f'machines/machine_{self.name}{extension}'
+
+        if self.picture.name != new_name:
+            new_path: str = os.path.join(settings.MEDIA_ROOT, new_name)
+            print('pas ok')
+            os.rename(self.picture.path, new_path)
+            self.picture.name = new_name
+
+        self.generate_thumbnail()
+
+        super(Machine, self).save(*args, **kwargs)
+
+    def generate_thumbnail(self):
+        img: PIL.Image = Image.open(self.picture)
+        w, h = img.size
+        alpha: float = self.THUMB_WIDTH / w
+        new_size = (int(w * alpha), int(h * alpha))
+
+        if w != new_size[0] or h != new_size[1]:
+            new_image = img.resize(new_size, Image.LANCZOS)
+            new_image.save(self.picture.path)
 
 
 class Exercise(models.Model):

@@ -146,11 +146,12 @@ def add_new_machine(request):
 
     form: MachineForm = MachineForm()
     if request.method == 'POST':
-        form = MachineForm(request.POST)
+        form = MachineForm(request.POST, request.FILES)
+        print(request.POST)
+        print(request.FILES)
         if form.is_valid():
             print('valid')
             form.save()
-            print(f'FORM ID -> {form.id}')
         else:
             print('not valid')
         ctx: Dict[str, MachineForm] = {'machine_form': form}

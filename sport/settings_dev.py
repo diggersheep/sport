@@ -140,4 +140,6 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, '/media/')
+MEDIA_ROOT = os.path.normpath(os.path.join(DJANGO_ROOT, 'media'))
+print(STATICFILES_DIRS)
+print(MEDIA_ROOT)
