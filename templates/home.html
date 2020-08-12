@@ -4,6 +4,11 @@
 {% block content %}
 
     <br>
+    <div>
+      <div id="reader"></div>
+    </div>
+
+    <br>
     <h2 class="text-primary">Liste des machines</h2>
     <br>
 
@@ -34,6 +39,26 @@
             </div>
         {% endfor %}
     </div>
+{% endblock %}
+{% block foot-javascript %}
+<script src="{% static 'js/qrcode.min.js' %}"></script>
+<script>
+
+let success = (message) => {
+    let url = "{% url 'add_machine_code' %}" + message;
+    $(location).attr('href', url);
+}
 
 
+$(document).ready(function() {
+  let qr_reader = new Html5QrcodeScanner(
+      "reader",
+      {
+          fps: 1,
+          qrbox: 250,
+      }
+  );
+  qr_reader.render(success);
+});
+</script>
 {% endblock %}
