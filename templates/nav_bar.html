@@ -16,19 +16,11 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-        {% if user.is_superuser %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
-            </li>
-        {% endif %}
-
         <ul class="nav navbar-nav navbar-right">
-            {% if user.is_authenticated %}
+
+              {% if user.is_authenticated %}
                 <li>
-                    <a class="nav-link" href="{% url 'stats' %}">Statistiques</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">Se déconnecter</a>
+                  <a class="nav-link" href="{% url 'stats' %}">Statistiques</a>
                 </li>
 
                 <li class="nav-item dropdown">
@@ -46,20 +38,27 @@
                     {% endwith %}
 
                     </div>
-                  </li>
-                <li class="nav-item">
-                    <a class="nav-link">{{ user.get_username }}</a>
                 </li>
-            {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Se connecter</a>
+
+                <li class="nav-item dropdown">
+                    <a href="" class="nav-link dropdown-toggle" id="navUserDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ user.get_username }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navUserDropdown">
+                        {% if user.is_superuser %}
+                          <a href="{% url 'admin:index' %}" class="dropdown-item">Admin</a>
+                          <a href="{% url 'new_machine' %}" class="dropdown-item">Ajouter une machine</a>
+                        {% endif %}
+                        <a href="{% url 'logout' %}" class="dropdown-item">Se connecter</a>
+                    </div>
                 </li>
-            {% endif %}
 
-
+              {% else %}
+                <li>
+                    <a class="nav-link nav-item" href="{% url 'login' %}">Se déconnecter</a>
+                </li>
+              {% endif %}
+        </ul>
     </ul>
-      <div>
-
-      </div>
     </div>
 </nav>

@@ -1,5 +1,5 @@
 # Create your views here.
-from typing import (List, Optional, Iterable, Dict)
+from typing import (List, Optional, Iterable, Dict, Any)
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max
@@ -159,3 +159,37 @@ def add_new_machine(request):
     else:
         ctx: Dict[str, MachineForm] = {'machine_form': form}
         return render(request, 'core/add_machine.html', context=ctx)
+
+
+@login_required
+def add_machine_code(request):
+
+    if request.method == 'POST':
+        machine_id: int = int(request.POST.get('id'))
+        instance: Machine = Machine.objects.get(id=machine_id)
+        data: Dict[str, Any] = request.POST.copy()
+        data['name'] = instance.name
+        form = MachineForm(data=data, instance=instance)
+
+        if form.is_valid():
+            form.save()
+            return redirect('machine', instance.id)
+        else:
+            machines_without_code: Iterable[Machine] = Machine.objects.filter(code__isnull=True).order_by('name')
+            ctx: Dict[str, Any] = {
+                'machines': machines_without_code,
+                'machine_form': form,
+                'machine_id': 0,
+            }
+            return render(request, 'core/add_machine_code.html', context=ctx)
+
+    machines_without_code: Iterable[Machine] = Machine.objects.filter(code__isnull=True).order_by('name')
+    ctx: Dict[str, Any] = {
+        'machines': machines_without_code,
+        'machine_id': int(request.GET.get('id', 0)),
+    }
+    return render(request, 'core/add_machine_code.html', context=ctx)
+
+
+def redirect_machine_by_code(request, code: str):
+    return redirect('machine', Machine.objects.get(code=code).id)

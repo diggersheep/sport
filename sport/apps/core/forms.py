@@ -10,7 +10,6 @@ class MachineForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        name: str = cleaned_data.get('name', None)
         code: str = cleaned_data.get('code', None)
 
         if code is not None and isinstance(code, str) and code.strip() != '':

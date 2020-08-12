@@ -6,6 +6,11 @@
 
     <div>
         <h1 class="text-primary">{{ machine.name }}</h1>
+        {% if machine.code %}
+          <h4 class="text-secondary">(code: <i>{{ machine.code }}</i>)</h4>
+        {% else %}
+          <a href="{% url 'add_machine_code'%}?id={{ machine.id }}" class="btn btn-secondary">Ajouter une code</a>
+        {% endif %}
     </div>
 
     <h2>Liste des exercises</h2>

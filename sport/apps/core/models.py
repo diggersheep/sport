@@ -1,15 +1,12 @@
 import os
-import uuid
-from typing import List, Tuple
+from typing import Iterable
 
 import PIL
 from PIL import Image
-from django import template
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Q, Max, Count
-from django.db.models.functions import TruncMonth
+from django.db.models import QuerySet
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.datetime_safe import datetime
@@ -23,15 +20,15 @@ class Machine(models.Model):
     # picture = models.CharField(max_length=32, null=True)
     picture = models.ImageField(upload_to='machines', null=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.name)
 
-    def has_today_serie(self, user):
-        exercises = Exercise.objects.filter(
+    def has_today_serie(self, user) -> bool:
+        exercises: Iterable[Exercise] = Exercise.objects.filter(
             machine=self
         )
-        for exo in exercises:
-            if Exercise.has_today_serie(exo.id, user=user):
+        for exercise in exercises:
+            if Exercise.has_today_serie(exercise.id, user=user):
                 return True
         return False
 
@@ -41,22 +38,20 @@ class Machine(models.Model):
 
         if self.picture.name != new_name:
             new_path: str = os.path.join(settings.MEDIA_ROOT, new_name)
-            print('pas ok')
             os.rename(self.picture.path, new_path)
             self.picture.name = new_name
-
-        self.generate_thumbnail()
-
+        self.resize_image()
         super(Machine, self).save(*args, **kwargs)
 
-    def generate_thumbnail(self):
+    def resize_image(self) -> None:
         img: PIL.Image = Image.open(self.picture)
         w, h = img.size
         alpha: float = self.THUMB_WIDTH / w
-        new_size = (int(w * alpha), int(h * alpha))
+        new_w: int = int(w * alpha)
+        new_h: int = int(h * alpha)
 
-        if w != new_size[0] or h != new_size[1]:
-            new_image = img.resize(new_size, Image.LANCZOS)
+        if w != new_w or h != new_h:
+            new_image: Image = img.resize((new_w, new_h), Image.LANCZOS)
             new_image.save(self.picture.path)
 
 
@@ -65,16 +60,16 @@ class Exercise(models.Model):
     setting = models.CharField(max_length=32, default='')
     description = models.CharField(max_length=256, default='')
 
-    def __str__(self):
-        return '{} - {}'.format(self.machine.name, self.setting)
+    def __str__(self) -> str:
+        return f'{self.machine.name} - {self.setting}'
 
-    def has_today_serie(self, user):
-        objs = Serie.objects.filter(
+    def has_today_serie(self, user) -> bool:
+        series: QuerySet = Serie.objects.filter(
             exercise=self,
             date__gte=datetime.now().replace(hour=0, minute=0, second=0),
             user=user,
         )
-        return len(objs) > 0
+        return len(series) > 0
 
 
 class Serie(models.Model):
@@ -85,7 +80,7 @@ class Serie(models.Model):
     date = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '[{}@{}] {} {} - w:{} - r:{}'.format(
             self.user.username,
             self.date,
@@ -100,7 +95,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     theme = models.CharField(max_length=16, default='purple')
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.user.username)
 
     @receiver(post_save, sender=User)
