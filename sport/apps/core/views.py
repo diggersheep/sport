@@ -2,12 +2,12 @@
 from typing import (List, Optional, Iterable, Dict, Any)
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Max
+from django.db.models import Max, QuerySet
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
-from sport.apps.core.forms import MachineForm
+from sport.apps.core.forms import MachineForm, ExerciseForm
 from sport.apps.core.models import Machine, Exercise, Serie
 
 
@@ -191,5 +191,35 @@ def add_machine_code(request):
     return render(request, 'core/add_machine_code.html', context=ctx)
 
 
+@login_required
 def redirect_machine_by_code(request, code: str):
     return redirect('machine', Machine.objects.get(code=code).id)
+
+
+@login_required
+def new_exercise(request, machine_id):
+    machine: Machine = Machine.objects.get(id=machine_id)
+    exercises = Exercise.objects.filter(machine=machine).order_by('setting')
+    form: ExerciseForm = ExerciseForm()
+
+    ctx: Dict[str, Any] = {
+        'machine': machine,
+        'exercises': exercises,
+        'exercise_form': form,
+    }
+
+    if request.method == 'POST':
+        form = ExerciseForm(data=request.POST.copy())
+        if form.is_valid():
+            form.save()
+        else:
+            ctx['exercise_form'] = form
+            return render(request, 'core/new_exo.html', context=ctx)
+
+        operation: str = request.POST.get('operation')
+        if operation == 'add':
+            return redirect('exercise', form.instance.id)
+        elif operation == 'readd':
+            pass
+
+    return render(request, 'core/new_exo.html', context=ctx)

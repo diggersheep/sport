@@ -19,6 +19,8 @@ urlpatterns = [
     path('machine/code/', views.add_machine_code, name='add_machine_code'),
     path('machine/code/<str:code>', views.redirect_machine_by_code, name='machine_code'),
     path('machine/<int:machine_id>', views.machine, name='machine'),
+    path('machine/<int:machine_id>/new_exercise', views.new_exercise, name="new_exercise"),
+
     path('exercise', views.post_serie_delete, name='del_serie'),
     path('exercise/<int:exo_id>', views.exercise, name='exercise'),
     path('exercise/add_serie/', views.post_add_serie, name='add_serie'),
