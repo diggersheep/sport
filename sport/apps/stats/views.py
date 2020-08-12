@@ -1,4 +1,3 @@
-
 # Create your views here.
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -17,4 +16,3 @@ class StatsView(TemplateView):
             'total_series': len(series)
         }
         return render(request, self.template_name, context=context)
-
