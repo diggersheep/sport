@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Exercice',
+            name='Exercise',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('setting', models.CharField(default='', max_length=32)),
@@ -37,12 +37,12 @@ class Migration(migrations.Migration):
                 ('weight', models.FloatField(default=0.0)),
                 ('reps', models.IntegerField(default=0)),
                 ('date', models.DateTimeField(auto_now=True)),
-                ('exercice', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.Exercice')),
+                ('exercise', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.Exercise')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.AddField(
-            model_name='exercice',
+            model_name='exercise',
             name='machine',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.Machine'),
         ),

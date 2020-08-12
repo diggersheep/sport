@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<br>
+<h2 class="text-primary">Ajout d'un excercice pour la machine: <a href="{% url 'machine' machine.id %}">{{ machine.name }}</a></h2>
+<br>
+
+<h3>Excercices déjà enregistrés</h3>
+<br>
+
+{% if exercises|length > 0 %}
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Configuration</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for exercise in exercises %}
+        <tr>
+          <th>{{ forloop.counter }}</th>
+          <td><a href="{% url 'exercise' exercise.id %}">{{ exercise.setting }}</a></td>
+          <td>{{ exercise.description|default:'-' }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="alert alert-info">Aucun exercice enregistré pour cette machine</div>
+{% endif %}
+
+<br>
+
+<div>
+  <h3>Formulaire d'ajout</h3>
+  <br>
+  <form method="POST" id="form">
+    {% csrf_token %}
+    <input type="hidden" name="machine" value="{{ machine.id }}">
+
+    <div class="form-group row">
+      <label for="setting" class="col-3">Configuration</label>
+      <div class="col-6">
+        {{ exercise_form.setting }}
+      </div>
+      {% if exercise_form.setting.errors %}
+        <div class="col-3 alert alert-danger">
+          {{  exercise_form.setting.errors }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="form-group row">
+      <label for="description" class="col-3">Description</label>
+      <div class="col-6">
+        {{ exercise_form.description }}
+      </div>
+      {% if exercise_form.description.errors %}
+        <div class="col-3 alert alert-danger">
+          {{  exercise_form.description.errors }}
+        </div>
+      {% endif %}
+    </div>
+
+    <button class="btn btn-primary submit-btn" name="operation" value="readd">Ajouter et recommencer</button>
+    <button class="btn btn-primary submit-btn" name="operation" value="add">Ajouter</button>
+  </form>
+</div>
+  <br>
+  <br>
+{% endblock %}

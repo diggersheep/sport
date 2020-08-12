@@ -4,9 +4,9 @@
 {% block content %}
 
     <div class="jumbotron w-100 py-5 mx-auto mt-2">
-        <h3>{{ exercice.description }}</h3>
+        <h3>{{ exercise.description }}</h3>
         <br>
-        <p>Configuration : <span class="badge badge-primary">{{ exercice.setting }}</span></p>
+        <p>Configuration : <span class="badge badge-primary">{{ exercise.setting }}</span></p>
     </div>
 
     <div class="card bg-primary text-white h-100">
@@ -47,7 +47,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <span class="text-primary">Félicitation !</span> Tu viens d'exploser ton <span>max</span> sur cet exercice.
+            <span class="text-primary">Félicitation !</span> Tu viens d'exploser ton <span>max</span> sur cet exercise.
 
           </div>
           <div class="modal-footer">
@@ -86,14 +86,14 @@
             weight = $('#weight').val();
             reps = $('#reps').val();
             $.post({
-                url: '/exercice/add_serie/',
+                url: '/exercise/add_serie/',
                 data: {
                     weight: weight,
                     reps: reps,
-                    exo_id: {{ exercice.id }},
+                    exo_id: {{ exercise.id }},
                 },
                 success: function(data){
-                    load_data(5, {{ exercice.id }}, true);
+                    load_data(5, {{ exercise.id }}, true);
                     get_for_info(true);
                 },
                 error: function(data){
@@ -106,7 +106,7 @@
         $.post({
             url: "{% url 'series' %}",
             data: {
-                'exo_id': '{{ exercice.id }}',
+                'exo_id': '{{ exercise.id }}',
                 'limit': 5,
             }
         });
@@ -151,7 +151,7 @@
                           url: '{% url 'del_serie' %}',
                           data: {
                             serie_id: serie_id,
-                            exo_id: {{ exercice.id }},
+                            exo_id: {{ exercise.id }},
                             success: del_success_callback
                           }
                         });
@@ -169,7 +169,7 @@
         }
 
         function del_success_callback (data) {
-            load_data(5, {{ exercice.id }}, false);
+            load_data(5, {{ exercise.id }}, false);
             $('#top-label').css('visibility', 'visible');
             $('#top-label').css('opacity', '0.9');
             setTimeout(function(){
@@ -185,7 +185,7 @@
         }
 
         window.addEventListener('load', function(){
-            load_data(5, {{ exercice.id }}, false);
+            load_data(5, {{ exercise.id }}, false);
         })
 
     </script>

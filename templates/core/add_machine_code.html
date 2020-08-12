@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <br>
+  <h2 class="text-primary">Ajout d'une machine</h2>
+  <br>
+
+  <div>
+    <div id="qr_reader" width="250px" class="mb-2"></div>
+
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ machine_form.id }}
+
+      <div class="form-group row">
+        <label for="code" class="col-3">QR code</label>
+        <div class="col-6">
+          <input id="reader_result" type="text"
+              name="code" class="form-control"
+              value="{{ machine_form.code.value|safe|default:'' }}" readonly required
+              placeholder="Pas de code"
+          >
+        </div>
+        {% if machine_form.code.errors %}
+          <div class="col-3 alert alert-danger">
+            {{  machine_form.code.errors }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="form_group row">
+        <label for="id" class="col-3">Machine</label>
+        <select name="id" class="form-control col-6">
+          {% for machine in machines %}
+            {% if machine.id == machine_id %}
+              <option value="{{ machine.id }}" selected>{{ machine.name }}</option>
+            {% else %}
+              <option value="{{ machine.id }}">{{ machine.name }}</option>
+            {%  endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+      <input type="submit" value="Ajouter un code" class="btn btn-primary mt-2">
+    </form>
+  </div>
+
+{% endblock %}
+
+{% block foot-javascript %}
+<script src="{% static 'js/qrcode.min.js' %}"></script>
+<script>
+function success (message) {
+    $('#reader_result').val(message);
+    console.log(message);
+}
+
+
+$(document).ready(function() {
+  let qr_reader = new Html5QrcodeScanner(
+      "qr_reader",
+      {
+          fps: 10,
+          qrbox: 250,
+      }
+  );
+  qr_reader.render(success);
+});
+</script>
+{% endblock %}
