@@ -36,10 +36,11 @@ class Machine(models.Model):
         extension: str = os.path.splitext(self.picture.name)[1]
         new_name: str = f'machines/machine_{self.name}{extension}'
 
-        if self.picture.name != new_name:
-            new_path: str = os.path.join(settings.MEDIA_ROOT, new_name)
-            os.rename(self.picture.path, new_path)
-            self.picture.name = new_name
+        # todo: fix this sh**. error at saving. Maybe img not found?
+        # if self.picture.name != new_name:
+        #    new_path: str = os.path.join(settings.MEDIA_ROOT, new_name)
+        #    os.rename(self.picture.path, new_path)
+        #     self.picture.name = new_name
         self.resize_image()
         super(Machine, self).save(*args, **kwargs)
 
